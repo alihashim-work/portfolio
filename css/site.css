@@ -286,3 +286,9 @@ body.roaming .roamhint.quiet{opacity:1;pointer-events:auto}
 #gl{opacity:0;transition:opacity 1.2s ease}#gl.live{opacity:1}
 .loading{background:transparent;pointer-events:none;align-items:end;padding-bottom:12vh}
 .loading .ur{display:none}
+
+/* Lightweight defaults */
+img{height:auto}
+.fonts-preload{display:none}
+#grain{display:none}
+.page[hidden],.poster[hidden]{display:none!important}
