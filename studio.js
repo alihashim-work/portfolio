@@ -8,7 +8,9 @@ import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniformsLib.js';
 window.THREE=THREE;window.FX={EffectComposer,RenderPass,GTAOPass,UnrealBloomPass,ShaderPass,OutputPass,RectAreaLightUniformsLib};
 const fetchJSON=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(u);return r.json()});
-await Promise.all([fetchJSON(window.ASSETS.room).then(j=>{window.ASSETS.room=j}),...Object.entries(window.ASSETS.models).map(([n,u])=>fetchJSON(u).then(j=>{window.ASSETS.models[n]=j}))]);
+window.__loadPack=async u=>{const j=await fetchJSON(u);if(j.bin){const buf=await fetch(u.slice(0,-5)+'.bin').then(r=>r.arrayBuffer());(j.meshes||[]).forEach(me=>['p','n','u','b','i'].forEach(k=>{if(Array.isArray(me[k]))me[k]=buf.slice(me[k][0],me[k][0]+me[k][1])}))}return j};
+window.DATA={};
+await Promise.all([window.__loadPack(window.ASSETS.room).then(j=>{window.ASSETS.room=j}),fetchJSON('data/books.json').then(j=>{window.DATA.books=j}),fetchJSON('data/career.json').then(j=>{window.DATA.career=j})]);
 (function(){
 var body=document.body,html=document.documentElement;
 var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -55,12 +57,12 @@ function imgTex(im,max){var w=im.naturalWidth||1,h=im.naturalHeight||1,k=Math.mi
 function imgs(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
 function ready(img){if(img.loading==="lazy")img.loading="eager";return img.decode?img.decode().catch(function(){}):Promise.resolve()}
 
-function b64(s){var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer}
+function b64(s){if(s instanceof ArrayBuffer)return s;var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer}
 function dataImg(uri){return new Promise(function(res){var im=new Image();im.onload=function(){res(im)};im.onerror=function(){res(im)};im.src=uri})}
 var IM={};
 function preloadAssets(){var jobs=[],n=0,done=0;function add(key,uri){n++;jobs.push(dataImg(uri).then(function(im){IM[key]=im;done++;setLoad('Laying the floorboards…',.15+.55*done/n)}))}
  Object.keys(ASSETS.tex).forEach(function(k){add('t:'+k,ASSETS.tex[k])});Object.keys(ASSETS.photo||{}).forEach(function(k){add(k,ASSETS.photo[k])});add('hdr',ASSETS.hdr);if(ASSETS.ext)add('ext',ASSETS.ext);
- Object.keys(ASSETS.models).forEach(function(mn){ASSETS.models[mn].mats.forEach(function(m,i){['map','nor','arm'].forEach(function(f){if(m[f])add('m:'+mn+':'+i+':'+f,m[f])})})});
+ Object.keys(ASSETS.models).forEach(function(mn){if(typeof ASSETS.models[mn]!=='object')return;ASSETS.models[mn].mats.forEach(function(m,i){['map','nor','arm'].forEach(function(f){if(m[f])add('m:'+mn+':'+i+':'+f,m[f])})})});
  return Promise.all(jobs)}
 function itex(im,srgb,rep,flip){var t=new T.Texture(im);t.needsUpdate=true;if(srgb)t.colorSpace=T.SRGBColorSpace;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());if(rep){t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(rep[0],rep[1])}if(flip===false)t.flipY=false;return t}
 function pbr(name,rep,color,extra){var o={map:itex(IM['t:'+name+'_diff'],true,rep),normalMap:itex(IM['t:'+name+'_nor'],false,rep),roughnessMap:itex(IM['t:'+name+'_rough'],false,rep),color:color||0xffffff,roughness:1,metalness:0};for(var k in extra)o[k]=extra[k];var m=std(o);m.normalScale=new T.Vector2(1,1);return m}
@@ -79,6 +81,9 @@ function model(mn,scale,opts){opts=opts||{};var black=false;var d=ASSETS.models[
   var mesh=new T.Mesh(me._g,mats[me.m]);mesh.castShadow=!mats[me.m].transparent;mesh.receiveShadow=true;grp.add(mesh)});
  if(scale)grp.scale.setScalar(scale);return grp}
 
+var MP={};
+function whenModel(n){if(MP[n])return MP[n];var src=ASSETS.models[n];MP[n]=(typeof src==='string'?window.__loadPack(src):Promise.resolve(src)).then(function(j){ASSETS.models[n]=j;var jobs=[];j.mats.forEach(function(mt,i){['map','nor','arm'].forEach(function(f){if(mt[f]&&!IM['m:'+n+':'+i+':'+f])jobs.push(dataImg(mt[f]).then(function(im){IM['m:'+n+':'+i+':'+f]=im}))})});return Promise.all(jobs)});return MP[n]}
+function later(n,s,cb){whenModel(n).then(function(){cb(model(n,s))}).catch(function(e){console.warn('model',n,e)})}
 function boot(){if(S.booted)return;S.booted=true;
  var canvas=document.getElementById('gl');
  try{renderer=new T.WebGLRenderer({canvas:canvas,antialias:true,powerPreference:'high-performance'})}catch(e){window.__setClassic(true);return}
@@ -262,28 +267,7 @@ function makeShelfBooks(w,h,d,shelves){var g=new T.Group(),palette=[0x3b1414,0x1
  var im=new T.InstancedMesh(new T.BoxGeometry(1,1,1),new T.MeshPhysicalMaterial({color:0xffffff,roughness:.7,sheen:.4,sheenColor:new T.Color(0x332a22)}),books.length),o=new T.Object3D(),c=new T.Color();
  books.forEach(function(b,i){o.position.set(b.x,b.y,b.z);o.rotation.set(0,0,b.lean);o.scale.set(b.w,b.h,b.d);o.updateMatrix();im.setMatrixAt(i,o.matrix);im.setColorAt(i,c.setHex(b.c))});im.castShadow=true;im.receiveShadow=true;g.add(im);return g}
 // ===== Ali's favourite books, spines on the scanned bookshelf =====
-var FAVS=[
- // row 0: Grisham and Ludlum paperbacks
- {r:0,s:'grisham',a:'JOHN GRISHAM',l:['The Firm','A Time to Kill','The Pelican Brief','The Client','The Chamber','The Rainmaker','The Runaway Jury','The Partner','The Street Lawyer','The Testament','The Brethren','The Broker']},
- {r:0,s:'ludlum',a:'ROBERT LUDLUM',l:['The Bourne Identity','The Bourne Supremacy','The Bourne Ultimatum','The Matarese Circle','The Holcroft Covenant','The Chancellor Manuscript','The Parsifal Mosaic','The Icarus Agenda','The Aquitaine Progression','The Osterman Weekend','The Scarlatti Inheritance']},
- // row 1: Harry Potter, Tolkien, Saks
- {r:1,s:'hp',a:'J.K. ROWLING',l:['Harry Potter and the Philosopher’s Stone','Harry Potter and the Chamber of Secrets','Harry Potter and the Prisoner of Azkaban','Harry Potter and the Goblet of Fire','Harry Potter and the Order of the Phoenix','Harry Potter and the Half-Blood Prince','Harry Potter and the Deathly Hallows'],w:[.03,.032,.036,.056,.064,.048,.054]},
- {r:1,s:'tolkien',a:'J.R.R. TOLKIEN',l:['The Hobbit','The Fellowship of the Ring','The Two Towers','The Return of the King'],w:[.028,.042,.04,.044]},
- {r:1,s:'saks',a:'ELYN R. SAKS',l:['The Center Cannot Hold'],w:[.03]},
- // row 2: Riordan
- {r:2,s:'pj',a:'RICK RIORDAN',l:['The Lightning Thief','The Sea of Monsters','The Titan’s Curse','The Battle of the Labyrinth','The Last Olympian']},
- {r:2,s:'hoo',a:'RICK RIORDAN',l:['The Lost Hero','The Son of Neptune','The Mark of Athena','The House of Hades','The Blood of Olympus']},
- {r:2,s:'toa',a:'RICK RIORDAN',l:['The Hidden Oracle','The Dark Prophecy','The Burning Maze','The Tyrant’s Tomb','The Tower of Nero']},
- {r:2,s:'kane',a:'RICK RIORDAN',l:['The Red Pyramid','The Throne of Fire','The Serpent’s Shadow']},
- {r:2,s:'magnus',a:'RICK RIORDAN',l:['The Sword of Summer','The Hammer of Thor','The Ship of the Dead']},
- // row 3: Flanagan
- {r:3,s:'ranger',a:'JOHN FLANAGAN',l:['The Ruins of Gorlan','The Burning Bridge','The Icebound Land','The Battle for Skandia','The Sorcerer of the North','The Siege of Macindaw','Erak’s Ransom','The Kings of Clonmel','Halt’s Peril','The Emperor of Nihon-Ja','The Lost Stories','The Royal Ranger']},
- {r:3,s:'early',a:'JOHN FLANAGAN',l:['The Tournament at Gorlan','The Battle of Hackham Heath']},
- {r:3,s:'brother',a:'JOHN FLANAGAN',l:['The Outcasts','The Invaders','The Hunters','Slaves of Socorro','Scorpion Mountain','The Ghostfaces','The Caldera','Return of the Temujai']},
- // row 4: Urdu shelf
- {r:4,s:'yousufi',a:'مشتاق احمد یوسفی',ur:1,l:['چراغ تلے','خاکم بدہن','زرگزشت','آبِ گم','شامِ شعرِ یاراں']},
- {r:4,s:'hijazi',a:'نسیم حجازی',ur:1,l:['محمد بن قاسم','آخری چٹان','شاہین','یوسف بن تاشفین','خاک اور خون','قیصر و کسریٰ','اور تلوار ٹوٹ گئی','معظم علی','داستانِ مجاہد','آخری معرکہ','کلیسا اور آگ']}
-];
+var FAVS=((window.DATA&&DATA.books)||[]).map(function(b){return{r:b.shelf,s:b.series,a:b.author,ur:b.language==='ur'?1:0,l:b.titles}});
 var BSTYLE={
  grisham:{bg:['#e9e4d8','#1e2a44','#7a1c1c','#f0c419','#2a2a2a','#efeae0'],fg:['#111','#f2e9d0','#f4ecd8','#111','#e9d9a6','#8a1c1c'],font:'bold',h:[.178,.18],w:[.03,.042],big:'GRISHAM'},
  ludlum:{bg:['#141414','#1c1c1c','#5a0f0f','#0f1e2e'],fg:['#d8b04a','#e33b2b','#efe4c8','#cfd8e0'],font:'bold',h:[.178,.18],w:[.036,.05],big:'LUDLUM'},
@@ -378,14 +362,14 @@ function build(){
  [[-3.5],[3.5]].forEach(function(p){var s=new T.SpotLight(0xffd7a8,1.1,7,.5,.75,1.5);s.position.set(-7.4,4.2,p[0]);s.target.position.set(-10,1.9,p[0]);scene.add(s,s.target)});
  S.beam=new T.Mesh(new T.ConeGeometry(1.0,12.6,32,1,true),new T.MeshBasicMaterial({color:0xfff2d8,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide}));S.beam.geometry.translate(0,-6.3,0);S.beam.geometry.rotateX(-Math.PI/2);S.beam.position.set(-2.67,.915,1.2);S.beam.lookAt(9.94,2.35,0);scene.add(S.beam);
  // scanned furniture (Poly Haven, CC0)
- function put(n,x,y,z,ry,s){var o=model(n,s||1);o.position.set(x,y,z);o.rotation.y=ry||0;scene.add(o);return o}
+ function put(n,x,y,z,ry,s){var o=new T.Group();o.position.set(x,y,z);o.rotation.y=ry||0;scene.add(o);later(n,s||1,function(m){o.add(m)});return o}
  put('dining_chair_02',0,0,-6.15,Math.PI);put('sofa_02',3.2,0,4.6,Math.PI/2,1.2);put('mid_century_lounge_chair',4.6,0,2.4,Math.PI/2+.5);
  put('potted_plant_04',4.6,0,-9.1,0,2.4);put('potted_plant_04',-4.7,0,-9.1,1.2,2.2);put('hanging_industrial_lamp',0,4.5,-5.4);put('desk_lamp_arm_01',-.75,.775,-5.65,2.4);
  var bsh=put('wooden_bookshelf_worn',-9.67,0,-7.6,Math.PI/2,1.05);var books=makeFavBooks();books.scale.setScalar(1.05);books.position.set(-9.67,0,-7.6);books.rotation.y=Math.PI/2;scene.add(books);
- var cbw=new T.Group();cbw.position.set(.55,.795,-5.08);cbw.rotation.y=Math.PI+.3;scene.add(cbw);cbw.add(model('clipboard',1.25));
+ var cbw=new T.Group();cbw.position.set(.55,.795,-5.08);cbw.rotation.y=Math.PI+.3;scene.add(cbw);later('clipboard',1.25,function(m){cbw.add(m)});
  var lc=cvs(1024,1380),lx=lc[1];lx.fillStyle='#f6f1e4';lx.fillRect(0,0,1024,1380);paperNoise(lx,1024,1380,8);lx.fillStyle='#222';lx.font='60px "Special Elite","Courier New",monospace';lx.fillText('CLIENTS',70,190);imgs('.logos img').slice(0,24).forEach(function(im,i){try{fitContain(lx,im,70+(i%4)*221+18,250+((i/4)|0)*150+18,185,114)}catch(e){}});
  var lp=new T.Mesh(new T.PlaneGeometry(.255,.36),std({map:tex(lc[0]),roughness:.9}));lp.rotation.x=-Math.PI/2;lp.position.set(0,.0085,.03);cbw.add(lp);markHot(cbw,'clients','Clients');stopObj.clients=cbw;
- var ph=new T.Group();ph.position.set(-7.4,1.15,9.99);ph.rotation.y=Math.PI;scene.add(ph);ph.add(model('vintage_telephone_wall_clock',1.6));markHot(ph,'contact','Contact');stopObj.contact=ph;
+ var ph=new T.Group();ph.position.set(-7.4,1.15,9.99);ph.rotation.y=Math.PI;scene.add(ph);later('vintage_telephone_wall_clock',1.6,function(m){ph.add(m)});markHot(ph,'contact','Contact');stopObj.contact=ph;
  // panelled door on the south wall
  var door=new T.Group();door.position.set(-8.7,0,9.98);door.rotation.y=Math.PI;scene.add(door);var dw=MATS.walnut_dark,tr=MATS.trim;
  [-.62,.62].forEach(function(x){door.add(at(box(.1,2.5,.08,tr),x,1.25,.04))});door.add(at(box(1.34,.1,.08,tr),0,2.5,.04));door.add(at(box(1.14,2.42,.05,dw),0,1.21,.03));[[.85,1.65],[.75,.55]].forEach(function(p){door.add(M(rbox(.86,p[0],.03,.012,3),dw,0,p[1],.065))});
@@ -413,7 +397,7 @@ function build(){
  // ===== NORTH (right): career board, every job on a ribbon =====
  var cg=new T.Group();cg.position.set(-9.96,1.95,-3.5);cg.rotation.y=Math.PI/2;scene.add(cg);
  cg.add(at(box(2.2,1.9,.05,frameM),0,0,0));var ckc2=corkCanvas(1100,950,9);var cork2=new T.Mesh(new T.PlaneGeometry(2.08,1.78),std({map:tex(ckc2),roughness:.95,bumpMap:tex(ckc2,null,true),bumpScale:.006}));cork2.position.z=.027;cork2.receiveShadow=true;cg.add(cork2);
- var JOBS=[['2021 to 2022','iGate Technology','RDX Sports','Copywriter','Launches across five Amazon marketplaces'],['2022 to 2023','CyberGen','','Copyeditor','Direct response and B2B copy, US clients'],['2023','AmalZau','','Marketing Project Manager','Founding team, e-learning launch'],['2023 to 2024','M&C Saatchi','World Services','Creative Manager','KhairKhwah, SPARC, UNICEF, government'],['Nov 2024 to Nov 2025','Ogilvy Pakistan','','Senior Creative Manager','Telenor, Tabeeb Online, GameBird'],['Dec 2025 to Jun 2026','Add Hype','','Senior Creative Manager','Roche, Grundfos UAE, EO Lahore, Happilac'],['Jul 2026 to now','Mammoth-AI','','Digital Marketing Manager','TestMax, iCōd.ai, Voyager, Spark']];
+ var JOBS=((window.DATA&&DATA.career)||[]).filter(function(c){return c.board}).reverse().map(function(c){var b=c.board;return[b.dates,b.company,b.sub,b.role,b.line]});
  var spots=[[-.78,.47],[-.26,.5],[.26,.46],[.78,.5],[.62,-.43],[0,-.46],[-.62,-.42]],jpins=[];
  JOBS.forEach(function(j,i){var c3=cvs(560,430),x=c3[1];x.fillStyle=i%3===1?'#f3efe4':'#fbf8ef';x.fillRect(0,0,560,430);paperNoise(x,560,430,70+i);x.strokeStyle='rgba(200,60,60,.55)';x.lineWidth=2;x.beginPath();x.moveTo(0,92);x.lineTo(560,92);x.stroke();
   x.fillStyle='#8a1f1f';x.font='44px "Caveat",cursive';x.fillText(j[0],30,66);x.fillStyle='#111';x.font='bold 44px "Special Elite","Courier New",monospace';x.fillText(j[1],30,160);x.fillStyle='#555';x.font='28px "Special Elite","Courier New",monospace';if(j[2])x.fillText(j[2],30,200);

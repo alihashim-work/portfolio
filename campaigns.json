@@ -1,0 +1,153 @@
+[
+ {
+  "id": "khairkhwah",
+  "client": "KhairKhwah, family planning for FCDO’s DAFPAK programme",
+  "title": "Headlines of Tomorrow, digital expansion",
+  "summary": "The launch film asked whether tomorrow’s headlines would be better than today’s. The digital expansion carried that question to where conversations happen online: live sessions on X, X posts and Instagram content built around the Headlines of Tomorrow idea.",
+  "stats": [],
+  "films": [],
+  "images": [
+   {
+    "image": "assets/img/568e19bc6aa3.webp",
+    "caption": "Key visual, “Kya khabar hai?”"
+   }
+  ],
+  "links": [
+   {
+    "text": "KhairKhwah on X",
+    "href": "https://x.com/Khairkhwah_PK"
+   }
+  ],
+  "note": "My role: the digital expansion across X Spaces, X posts and Instagram. The launch film was produced separately."
+ },
+ {
+  "id": "tksk",
+  "client": "Telenor Pakistan, Monthly Prime summer campaign",
+  "title": "Tension Ko Smash Karo",
+  "summary": "Expensive bundles are a summer headache. Tension Ko Smash Karo turned a price offer into a mood: smash the tension, full time aesh karo. Brand films led, and a wave of influencer content through May and June carried the line into people’s own feeds.",
+  "stats": [
+   {
+    "value": "6.2M",
+    "label": "YouTube views, lead film"
+   },
+   {
+    "value": "Black Dragon",
+    "label": "Digital, Dragons of Pakistan 2026"
+   }
+  ],
+  "films": [
+   "ICTVyXOYnH0",
+   "oZUcYU5y7mw",
+   "hkSeKC3OAPI"
+  ],
+  "images": [],
+  "links": [],
+  "note": null
+ },
+ {
+  "id": "sparc",
+  "client": "SPARC, Society for the Protection of the Rights of the Child",
+  "title": "Owners and Workers, Stand United",
+  "summary": "In Pakistan’s brick kilns, exploitation thrives. This series asked a different question: what if owners and workers broke bonded labour together, building a future where both sides prosper?",
+  "stats": [
+   {
+    "value": "8.5M+",
+    "label": "views across 4 films"
+   }
+  ],
+  "films": [
+   "nE1kxQG3T78",
+   "tcMxt71hpDI",
+   "L8FmhYpDF1k",
+   "lR5ib7tPbCE"
+  ],
+  "images": [
+   {
+    "image": "assets/img/14327f792cbe.webp",
+    "caption": "Key visual"
+   },
+   {
+    "image": "assets/img/62fcc9e3783f.webp",
+    "caption": "Shoulder to shoulder, social post"
+   }
+  ],
+  "links": [],
+  "note": null
+ },
+ {
+  "id": "conschem",
+  "client": "Happilac ConsChem, with Add Hype",
+  "title": "Jurro Rabb Se, Jurro Sab Se",
+  "summary": "A Ramadan to Eid platform built on one tension: we stay endlessly connected horizontally and forget the vertical connection. Ramadan reconnects you with the Creator; Eid carries that strength outward to family and community. Ashra, Jumah and Taaq Raatein series for the month, then an Eid animation to close the arc.",
+  "stats": [],
+  "films": [],
+  "images": [
+   {
+    "image": "assets/img/136defb9f102.webp",
+    "caption": "The big idea, Jurro Rabb Se"
+   },
+   {
+    "image": "assets/img/355bb30b00cd.webp",
+    "caption": "Ramadan rollout"
+   },
+   {
+    "image": "assets/img/3d9391256f80.webp",
+    "caption": "The Ashra series"
+   },
+   {
+    "image": "assets/img/d91679e0e795.webp",
+    "caption": "Phase two, Jurro Sab Se"
+   },
+   {
+    "image": "assets/img/5120964797a6.webp",
+    "caption": "Eid animation AV board"
+   }
+  ],
+  "links": [],
+  "note": null
+ },
+ {
+  "id": "unicef",
+  "client": "UNICEF Pakistan",
+  "title": "Parwarish Har Qadam",
+  "summary": "Children learn from what parents do, not what they say. Everyday reminders that urge parents to nurture at every step.",
+  "stats": [],
+  "films": [
+   "I2I0WfI0n0Y"
+  ],
+  "images": [
+   {
+    "image": "assets/img/5a69a5633de3.webp",
+    "caption": "Campaign visual"
+   }
+  ],
+  "links": [
+   {
+    "text": "Watch on UNICEF Pakistan’s Facebook",
+    "href": "https://www.facebook.com/unicefpakistan/videos/330990216359965/"
+   }
+  ],
+  "note": null
+ },
+ {
+  "id": "zenitel",
+  "client": "Zenitel, critical communication",
+  "title": "Never Miss a Beat",
+  "summary": "In healthcare, every second counts. Intercom solutions shown as quiet infrastructure that helps hospitals orchestrate care with precision, so patients get attention when it matters.",
+  "stats": [],
+  "films": [],
+  "images": [
+   {
+    "image": "assets/img/410d51cff3ae.webp",
+    "caption": "Campaign visual"
+   }
+  ],
+  "links": [
+   {
+    "text": "See campaign page",
+    "href": "https://www.zenitel.com/healthcare-communication-solutions"
+   }
+  ],
+  "note": null
+ }
+]
