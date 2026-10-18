@@ -1,47 +1,35 @@
-# Agency CXO Office
+# Ali Hashim: portfolio
 
-A 15 × 12 m vintage advertising-agency executive suite, built as a lightweight static Three.js website.
+Creative strategist and bilingual (Urdu and English) copywriter. This repository holds the portfolio website: a walk-through writers' office in 3D, with a Classic View that works without 3D.
 
-**Live:** https://alihashim-work.github.io/agency-cxo-office/
+## What's here
 
-## Revision 02 — material and detail study
+| Path | What it is |
+|---|---|
+| `index.html` | The whole portfolio: text, Urdu typography, campaigns, films, statics, scripts, clients, career and contact. Works on its own (Classic View) in about 70 KB. |
+| `css/site.css`, `js/ui.js` | Layout, lightbox, Classic View routing. |
+| `js/studio.js` | The 3D office (Three.js 0.163 from jsDelivr): guided scroll tour, free look and walk, screening mode, zoom-in panels. Loaded after the page is usable. |
+| `assets/img/` | Thumbnails, statics, logos, portrait, and `poster.webp` (a path-traced still shown instantly while 3D loads). |
+| `assets/textures/` | Photo-scanned PBR materials (walnut, herringbone parquet, velvet, leather, plaster), interior environment, window plate. |
+| `assets/models/` | `office20.json` (20 × 20 m room, walnut executive desk, 16mm projector, stand) and scanned furniture. Geometry is quantised; textures sit in `assets/models/tex/`. |
+| `sw.js` | Service worker: repeat visits load from the device cache. |
+| `office-study/` | The earlier "Agency CXO Office" procedural study, preserved unchanged. |
 
-This is an improved real-time architectural concept, **not a finished photorealistic visualization**. All furniture and textures are generated in code. There are no downloaded furniture assets, generated-image services, accounts, trackers, asset subscriptions, API keys or backend.
+## How it loads (fast first, heavy later)
 
-- Corrected human-scale furniture: a 2.65 × 1.1 m walnut desk with a nominal 78 cm desktop, drawer fronts, brass pulls, leather blotter, banker lamp and rotary telephone.
-- Cognac leather seating with curved arms, welt details, buttons and upholstery tacks; a detailed coffee table and ceramics.
-- Individual oak floorboards, wood grain, subtle upholstery grain, textile curtains, a patterned carpet, wall panelling and a populated library.
-- A reel projector facing the portfolio screen, framed campaign studies, a pinboard, an archive cabinet and plants.
-- Warm daylight, cast shadows, material reflections, and a screening mode that closes the curtains and dims daylight.
-- Arrival, desk, lounge and cutaway overview camera presets. The ceiling, front window wall and right wall are hidden only for the overview.
-- High-detail toggle adjusts render resolution. Static geometry is batched by material, and the 1,000 floorboards are instanced.
+1. HTML and CSS (~100 KB) paint the page and a photographic poster of the room immediately.
+2. Portfolio images load lazily as panels open.
+3. The 3D module and room assets download in the background, then the live room fades in over the poster.
+4. Everything heavy is cached by the service worker for return visits.
 
-The room envelope uses a **4 m ceiling**, following the original brief; the earlier website blockout had 4.5 m walls. Furniture placement is conceptual, not a construction or circulation-compliance drawing.
+## Credits and licences
 
-## Files and controls
+- Window view: "Faisal Mosque in the background of Centaurus Mall", Ahmed Iftikhar Sarmad, CC BY-SA 4.0, via Wikimedia Commons (cropped).
+- Scanned furniture, materials and environment: Poly Haven, CC0.
+- Three.js and addons: MIT.
+- Desk, projector, room shell, corkboard, whiteboard and career board: modelled for this project.
+- Client work is shown for portfolio purposes; marks belong to their owners.
 
-- `index.html`: accessible interface, dependency loading and error state.
-- `office.js`: deterministic geometry, materials, lighting and controls.
-- `baseline.html`: the original blockout, preserved for comparison.
+## Status (honest)
 
-Drag to orbit, scroll to zoom, right-drag to pan. Use the view buttons to return to an interior camera after orbiting outside the room. Reduced-motion preferences disable camera transitions.
-
-## Validation and limits
-
-JavaScript syntax and the actual Three.js geometry were checked locally. Checks cover finite vertex data, the 15 × 12 m footprint, desktop height, curtain/daylight mode changes, overview visibility, and unchanged world bounds after geometry batching. Revision 02 contains approximately 110k triangles, 1,000 instanced floorboards and 101 mesh batches/objects after optimization.
-
-Software geometry previews were inspected for composition. These are not GPU renders. The Work cloud browser could load the website but could not create a WebGL context, so final WebGL shading, performance and visual fidelity must still be verified on a WebGL-capable device. The user confirmed the original baseline rendered in their browser.
-
-The site requires WebGL and access to jsDelivr for the pinned Three.js 0.165.0 module and its official addons. A friendly error is shown if dependencies or WebGL fail. No dependency upgrades are introduced by this revision.
-
-## Spline workspace
-
-The existing separate editable Spline concept is `Agency CXO Office — 15x12m Vintage Suite`, UUID `d049e5d9-a108-4201-9864-5ae4ffa89daa`. It is **not automatically synchronized** with this website. Revision 02 changes the website; it does not claim to update the Spline scene.
-
-## Cost, licensing and repository scope
-
-All work remains in `alihashim-work/agency-cxo-office`. Hosting uses the already enabled GitHub Pages main/root configuration. No paid services or workflows were added.
-
-Three.js and its official addons are used under the MIT license: https://threejs.org/license . The pinned upstream license is https://cdn.jsdelivr.net/npm/three@0.165.0/LICENSE . Procedural geometry, textures and campaign graphics are authored for this project; no third-party image or furniture asset licenses are required.
-
-Git history and `baseline.html` preserve the earlier version. Future work can refine the material response and add properly licensed detailed models if needed, without treating this concept as already photorealistic.
+The path-traced renders of the desk and projector are close to photographic. The live browser room is a real-time approximation: no baked global illumination yet, a sparsely furnished 20 × 20 m space, and simple typewriter and curtain models. See `docs/ROADMAP.md`.
