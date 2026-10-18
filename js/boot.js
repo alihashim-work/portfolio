@@ -1,14 +1,14 @@
 window.__classicRoute();
-let preferClassic=false;
-try{preferClassic=localStorage.getItem('ah-view')==='classic'}catch(e){}
-const graphics=()=>{try{return !!document.createElement('canvas').getContext('webgl2')}catch(e){return false}};
+const enter=document.getElementById('toStudio');enter.textContent='Explore 3D office';
 let modulePromise;
-window.loadStudio=()=>modulePromise||(modulePromise=import('./studio.js?v=2').catch(error=>{
- console.warn('Studio unavailable',error);window.__setClassic(true);
- const button=document.getElementById('toStudio');button.textContent='3D unavailable — portfolio ready';button.disabled=true;
-}));
-if(graphics()){
- if(!preferClassic){document.body.className='studio';window.loadStudio()}
-}else{document.getElementById('toStudio').textContent='3D unavailable on this browser';document.getElementById('toStudio').disabled=true}
-
-setTimeout(()=>{if(!document.body.classList.contains('classic')&&(!window.Studio||!window.Studio.ready)){window.__setClassic(true)}},30000);
+window.loadStudio=()=>{
+ if(modulePromise)return modulePromise;
+ let canvas=document.createElement('canvas'),gl=canvas.getContext('webgl2');
+ if(!gl){window.__setClassic(true);enter.textContent='3D unavailable on this browser';enter.disabled=true;return}
+ gl.getExtension('WEBGL_lose_context')?.loseContext();canvas=null;gl=null;
+ const timer=setTimeout(()=>{if(!window.Studio?.ready&&!document.body.classList.contains('classic'))window.__setClassic(true)},30000);
+ modulePromise=import('./studio.js?v=3').catch(error=>{
+  clearTimeout(timer);console.warn('Studio unavailable',error);window.__setClassic(true);enter.textContent='3D unavailable — portfolio ready';enter.disabled=true;
+ });
+ return modulePromise;
+};
