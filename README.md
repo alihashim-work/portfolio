@@ -33,3 +33,11 @@ Creative strategist and bilingual (Urdu and English) copywriter. This repository
 ## Status (honest)
 
 The path-traced renders of the desk and projector are close to photographic. The live browser room is a real-time approximation: no baked global illumination yet, a sparsely furnished 20 × 20 m space, and simple typewriter and curtain models. See `docs/ROADMAP.md`.
+
+## Deployment repair — 18 October 2026
+
+The supplied portfolio is now the homepage. Asset directories have been restored from the original uploaded blobs, without removing the root uploads. The original 15 × 12 m office remains at `office-study/`. The supplied newer room uses its 20 × 20 m layout. Missing prop wood material references and graphics failure handling were corrected. Classic View works without WebGL, including campaign details, film links, image enlargement, Urdu scripts, client credits and contact.
+
+Live: https://alihashim-work.github.io/portfolio/
+
+This is the originally authorized agency-cxo-office repository, renamed to portfolio (GitHub ID 1424338700). No additional repository or paid service was created. GPU rendering and photorealism still require visual verification on a WebGL-capable device; do not treat the photographic poster as proof of live-render quality.
