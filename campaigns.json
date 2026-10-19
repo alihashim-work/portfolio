@@ -7,18 +7,14 @@
   "stats": [],
   "films": [],
   "images": [
-   {
-    "image": "assets/img/568e19bc6aa3.webp",
-    "caption": "Key visual, “Kya khabar hai?”"
-   }
+   "assets/img/568e19bc6aa3.webp"
   ],
   "links": [
    {
     "text": "KhairKhwah on X",
     "href": "https://x.com/Khairkhwah_PK"
    }
-  ],
-  "note": "My role: the digital expansion across X Spaces, X posts and Instagram. The launch film was produced separately."
+  ]
  },
  {
   "id": "tksk",
@@ -41,8 +37,7 @@
    "hkSeKC3OAPI"
   ],
   "images": [],
-  "links": [],
-  "note": null
+  "links": []
  },
  {
   "id": "sparc",
@@ -62,17 +57,10 @@
    "lR5ib7tPbCE"
   ],
   "images": [
-   {
-    "image": "assets/img/14327f792cbe.webp",
-    "caption": "Key visual"
-   },
-   {
-    "image": "assets/img/62fcc9e3783f.webp",
-    "caption": "Shoulder to shoulder, social post"
-   }
+   "assets/img/14327f792cbe.webp",
+   "assets/img/62fcc9e3783f.webp"
   ],
-  "links": [],
-  "note": null
+  "links": []
  },
  {
   "id": "conschem",
@@ -82,29 +70,13 @@
   "stats": [],
   "films": [],
   "images": [
-   {
-    "image": "assets/img/136defb9f102.webp",
-    "caption": "The big idea, Jurro Rabb Se"
-   },
-   {
-    "image": "assets/img/355bb30b00cd.webp",
-    "caption": "Ramadan rollout"
-   },
-   {
-    "image": "assets/img/3d9391256f80.webp",
-    "caption": "The Ashra series"
-   },
-   {
-    "image": "assets/img/d91679e0e795.webp",
-    "caption": "Phase two, Jurro Sab Se"
-   },
-   {
-    "image": "assets/img/5120964797a6.webp",
-    "caption": "Eid animation AV board"
-   }
+   "assets/img/136defb9f102.webp",
+   "assets/img/355bb30b00cd.webp",
+   "assets/img/3d9391256f80.webp",
+   "assets/img/d91679e0e795.webp",
+   "assets/img/5120964797a6.webp"
   ],
-  "links": [],
-  "note": null
+  "links": []
  },
  {
   "id": "unicef",
@@ -116,18 +88,14 @@
    "I2I0WfI0n0Y"
   ],
   "images": [
-   {
-    "image": "assets/img/5a69a5633de3.webp",
-    "caption": "Campaign visual"
-   }
+   "assets/img/5a69a5633de3.webp"
   ],
   "links": [
    {
     "text": "Watch on UNICEF Pakistan’s Facebook",
     "href": "https://www.facebook.com/unicefpakistan/videos/330990216359965/"
    }
-  ],
-  "note": null
+  ]
  },
  {
   "id": "zenitel",
@@ -137,17 +105,13 @@
   "stats": [],
   "films": [],
   "images": [
-   {
-    "image": "assets/img/410d51cff3ae.webp",
-    "caption": "Campaign visual"
-   }
+   "assets/img/410d51cff3ae.webp"
   ],
   "links": [
    {
     "text": "See campaign page",
     "href": "https://www.zenitel.com/healthcare-communication-solutions"
    }
-  ],
-  "note": null
+  ]
  }
 ]
